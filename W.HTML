@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Management System</title>
+    <style>
+        :root {
+            --background-color: rgba(240, 240, 240, 0.9);
+            --primary-color: #4caf50;
+            --secondary-color: #333;
+            --text-color: #000;
+            --header-color: #2e7d32;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://t3.ftcdn.net/jpg/08/00/24/14/360_F_800241479_6az9IoUaINm2z1GSyL53zZNQaOFyXCOO.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--header-color);
+            padding: 1em;
+            text-align: center;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        nav a {
+            color: #ffffff;
+            margin: 0 15px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #e0e0e0;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .section {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: var(--header-color);
+            color: #ffffff;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background-color: #388e3c;
+        }
+
+        .notification {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Waste Management System Prototype</h1>
+        <nav>
+            <a href="#request">Request Collection</a>
+            <a href="#status">Check Status</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="request" class="section">
+            <h2>Request Waste Collection</h2>
+            <div class="form-group">
+                <label for="wasteType">Type of Waste:</label>
+                <select id="wasteType">
+                    <option value="organic">Organic</option>
+                    <option value="recyclable">Recyclable</option>
+                    <option value="hazardous">Hazardous</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount (kg):</label>
+                <input type="number" id="amount" min="1" required>
+            </div>
+            <button class="btn" id="submitRequest">Submit Request</button>
+            <div class="notification" id="notification"></div>
+        </section>
+
+        <section id="status" class="section">
+            <h2>Check Collection Status</h2>
+            <div class="form-group">
+                <label for="requestId">Enter Request ID:</label>
+                <input type="text" id="requestId" required>
+            </div>
+            <button class="btn" id="checkStatus">Check Status</button>
+            <div class="notification" id="statusNotification"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Waste Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        let requests = [];
+        let requestIdCounter = 1;
+
+        document.getElementById('submitRequest').addEventListener('click', function() {
+            const wasteType = document.getElementById('wasteType').value;
+            const amount = document.getElementById('amount').value;
+
+            if (amount <= 0) {
+                showNotification('Please enter a valid amount.', 'error', 'notification');
+                return;
+            }
+
+            const request = {
+                id: requestIdCounter++,
+                type: wasteType,
+                amount: amount,
+                status: 'Pending'
+            };
+
+            requests.push(request);
+            showNotification(`Request submitted successfully! Your Request ID is ${request.id}.`, 'success', 'notification');
+            document.getElementById('amount').value = ''; // Clear input
+        });
+
+        document.getElementById('checkStatus').addEventListener('click', function() {
+            const requestId = document.getElementById('requestId').value;
+            const request = requests.find(req => req.id == requestId);
+
+            if (request) {
+                showNotification(`Request ID: ${request.id}, Type: ${request.type}, Amount: ${request.amount} kg, Status: ${request.status}`, 'success', 'statusNotification');
+            } else {
+                showNotification('Request not found. Please check the ID.', 'error', 'statusNotification');
+            }
+        });
+
+        function showNotification(message, type, elementId) {
+            const notification = document.getElementById(elementId);
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
